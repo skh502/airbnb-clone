@@ -1,0 +1,21 @@
+# === IDE/Editor ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# === System ===
+.DS_Store
+Thumbs.db
+
+# === Environment ===
+.env          # Global .env (if any)
+*.env.local   # Local overrides
+
+# === Logs ===
+*.log
+npm-debug.log*
+
+# === Optional ===
+dist/         # Generic build folder (if used)
+tmp/          # Temporary files
