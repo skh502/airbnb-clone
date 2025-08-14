@@ -1,19 +1,38 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import MenuLink from "./MenuLink";
-
-// import useLoginModal from "@/app/hooks/useLoginModal";
-// import useSignupModal from "@/app/hooks/useSignupModal";
+import useLoginModal from "@/hooks/useLoginModal";
+import useSignupModal from "@/hooks/useSignupModal";
 
 const UserNav = () => {
-  // const loginModal = useLoginModal();
-  // const signupModal = useSignupModal();
+  const loginModal = useLoginModal();
+  const signupModal = useSignupModal();
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isOpen]);
 
   return (
-    <div className="p-2 relative inline-block border rounded-full cursor-pointer">
+    <div
+      ref={dropdownRef}
+      className="p-2 relative inline-block border rounded-full cursor-pointer"
+    >
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         className="flex items-center cursor-pointer"
@@ -53,7 +72,7 @@ const UserNav = () => {
             label="Log in"
             onClick={() => {
               setIsOpen(false);
-              // loginModal.open();
+              loginModal.open();
             }}
           />
 
@@ -61,7 +80,7 @@ const UserNav = () => {
             label="Sign up"
             onClick={() => {
               setIsOpen(false);
-              // signupModal.open();
+              signupModal.open();
             }}
           />
         </div>
