@@ -19,3 +19,7 @@ npm-debug.log*
 # === Optional ===
 dist/         # Generic build folder (if used)
 tmp/          # Temporary files
+
+
+# Python virtual environments
+server/venv/
