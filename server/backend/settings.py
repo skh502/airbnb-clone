@@ -40,6 +40,11 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost 127.0.0.1 [::1
 # ALLOWED_HOSTS = config('DJANGO_ALLOWED_HOSTS', default='localhost 127.0.0.1 [::1]').split()
 
 
+# set later on 
+# default usage: built-in auth.User model
+# instead use my custom modal
+AUTH_USER_MODEL = 'useraccount.User'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,6 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'useraccount'
 ]
 
 MIDDLEWARE = [

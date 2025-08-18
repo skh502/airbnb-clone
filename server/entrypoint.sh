@@ -1,14 +1,19 @@
 #!/bin/sh
+# Entrypoint script for Django + Postgres
+# Remember: run `chmod +x entrypoint.sh` after creating this file
 
-# Wait for Postgres to be ready
-echo "Waiting for Postgres..."
-while ! nc -z $SQL_HOST $SQL_PORT; do
-    sleep 0.1
-done
-echo "PostgreSQL started"
+if [ "$DATABASE" = "postgres" ] 
+then
+    echo "Check if database is running..."
 
-# Run Django migrations
+    while ! nc -z $SQL_HOST $SQL_PORT; do
+        sleep 0.1
+    done
+
+    echo "The database is up and running :-D"
+fi
+
+python manage.py makemigrations
 python manage.py migrate
 
-# Execute any command passed to container
 exec "$@"
