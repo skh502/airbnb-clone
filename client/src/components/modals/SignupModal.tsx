@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useSignupModal from "@/hooks/useSignupModal";
 import CustomButton from "../forms/CustomButton";
+import apiService from "@/services/apiService";
+import { handleLogin } from "@/lib/action";
 
 const SignupModal = () => {
   const router = useRouter();
@@ -14,6 +16,33 @@ const SignupModal = () => {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
+
+  const submitSignup = async () => {
+    const formData = {
+      email,
+      password1,
+      password2,
+    };
+
+    const response = await apiService.post(
+      "/api/auth/register/",
+      JSON.stringify(formData)
+    );
+
+    if (response.access) {
+      // handleLogin
+      handleLogin(response.user.pk, response.access, response.refresh);
+
+      signupModal.close();
+      router.push("/");
+    } else {
+      const tempErrors: string[] = Object.values(response).map((error: any) => {
+        return error;
+      });
+
+      setErrors(tempErrors);
+    }
+  };
 
   const content = (
     <>
@@ -53,11 +82,7 @@ const SignupModal = () => {
           );
         })}
 
-        <CustomButton
-          label="Submit"
-          onClick={() => {}}
-          // onClick={submitSignup}
-        />
+        <CustomButton label="Submit" onClick={submitSignup} />
       </form>
     </>
   );
