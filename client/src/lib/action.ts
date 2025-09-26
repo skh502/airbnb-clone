@@ -29,3 +29,50 @@ export async function handleLogin(
     path: "/",
   });
 }
+
+export async function deleteAuthCookies() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("session_userid");
+  cookieStore.delete("session_access_token");
+  cookieStore.delete("session_refresh_token");
+
+  // or:
+  // cookieStore.set("session_userid", "", {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   maxAge: 0, // remove immediately
+  //   path: "/",
+  // });
+
+  // cookieStore.set("session_access_token", "", {
+  //   httpOnly: true,
+  //   secure: false,
+  //   maxAge: 0,
+  //   path: "/",
+  // });
+
+  // cookieStore.set("session_refresh_token", "", {
+  //   httpOnly: true,
+  //   secure: false,
+  //   maxAge: 0,
+  //   path: "/",
+  // });
+}
+
+export async function getUserId() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("session_userid")?.value;
+
+  return userId ? userId : null;
+}
+
+export async function getAccessToken() {
+  const cookieStore = await cookies();
+
+  let accessToken = cookieStore.get("session_userid")?.value;
+  if (!accessToken) {
+    // accessToken = await handleRefresh();
+  }
+  return accessToken;
+}

@@ -4,8 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import MenuLink from "./MenuLink";
 import useLoginModal from "@/hooks/useLoginModal";
 import useSignupModal from "@/hooks/useSignupModal";
+import LogoutButton from "../LogoutButton";
 
-const UserNav = () => {
+type Props = {
+  userId: string | null;
+};
+
+const UserNav = ({ userId }: Props) => {
   const loginModal = useLoginModal();
   const signupModal = useSignupModal();
   const [isOpen, setIsOpen] = useState(false);
@@ -68,21 +73,27 @@ const UserNav = () => {
 
       {isOpen && (
         <div className="w-[220px] absolute top-[105%] right-0 bg-white border border-red-300 rounded-xl shadow-md flex flex-col cursor-pointer z-12">
-          <MenuLink
-            label="Log in"
-            onClick={() => {
-              setIsOpen(false);
-              loginModal.open();
-            }}
-          />
+          {userId ? (
+            <LogoutButton />
+          ) : (
+            <>
+              <MenuLink
+                label="Log in"
+                onClick={() => {
+                  setIsOpen(false);
+                  loginModal.open();
+                }}
+              />
 
-          <MenuLink
-            label="Sign up"
-            onClick={() => {
-              setIsOpen(false);
-              signupModal.open();
-            }}
-          />
+              <MenuLink
+                label="Sign up"
+                onClick={() => {
+                  setIsOpen(false);
+                  signupModal.open();
+                }}
+              />
+            </>
+          )}
         </div>
       )}
     </div>

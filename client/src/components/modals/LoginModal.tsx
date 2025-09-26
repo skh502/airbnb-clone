@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import CustomButton from "../forms/CustomButton";
 import useLoginModal from "@/hooks/useLoginModal";
+import apiService from "@/services/apiService";
+import { handleLogin } from "@/lib/action";
 
 const LoginModal = () => {
   const router = useRouter();
@@ -13,6 +15,26 @@ const LoginModal = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
+
+  const submitLogin = async () => {
+    // console.log("login", email, password);
+    const formData = {
+      email,
+      password,
+    };
+    const response = await apiService.postWithoutToken(
+      "/api/auth/login/",
+      JSON.stringify(formData)
+    );
+
+    if (response.access) {
+      handleLogin(response.user.pk, response.access, response.refresh);
+      loginModal.close();
+      router.push("/");
+    } else {
+      setErrors(response.non_field_errors);
+    }
+  };
 
   const content = (
     <>
@@ -47,8 +69,8 @@ const LoginModal = () => {
 
         <CustomButton
           label="Submit"
-          onClick={() => {}}
-          // onClick={submitLogin}
+          // onClick={() => {}}
+          onClick={submitLogin}
         />
       </form>
     </>
