@@ -62,7 +62,9 @@ const Modal: React.FC<ModalProps> = ({ label, content, isOpen, close }) => {
               <h2 className="text-lg font-bold">{label}</h2>
             </header>
 
-            <section className="p-6">{content}</section>
+            <section className="p-6 max-h-[82dvh] overflow-y-scroll">
+              {content}
+            </section>
           </div>
         </div>
       </div>

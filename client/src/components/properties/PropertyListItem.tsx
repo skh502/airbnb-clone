@@ -9,11 +9,12 @@ interface PropertyItemProps {
 const PropertyListItem = ({ property }: PropertyItemProps) => {
   return (
     <div className="cursor-pointer">
-      <div className="relative overflow-hidden aspect-square rounded-xl">
+      <div className="relative overflow-hidden aspect-square rounded-xl w-50 h-50">
         <Image
-          fill
           src={property.image_url}
-          sizes="(max-width: 768px) 768px, (max-width: 1200px): 768px, 768px"
+          width={80}
+          height={80}
+          priority
           className="hover:scale-110 object-cover transition h-full w-full"
           alt={property.title}
         />

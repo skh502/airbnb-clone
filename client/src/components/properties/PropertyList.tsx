@@ -29,7 +29,14 @@ const PropertyList = () => {
   return (
     <>
       {properties?.map((property) => {
-        return <PropertyListItem key={property.id} property={property} />;
+        return (
+          <div
+            key={property.id}
+            className="flex flex-col md:flex-row items-center md:justify-start"
+          >
+            <PropertyListItem key={property.id} property={property} />
+          </div>
+        );
       })}
     </>
   );

@@ -70,9 +70,10 @@ export async function getUserId() {
 export async function getAccessToken() {
   const cookieStore = await cookies();
 
-  let accessToken = cookieStore.get("session_userid")?.value;
+  let accessToken = cookieStore.get("session_access_token")?.value;
   if (!accessToken) {
     // accessToken = await handleRefresh();
+    // some logic after sometime
   }
   return accessToken;
 }
