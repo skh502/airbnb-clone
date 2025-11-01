@@ -1,7 +1,11 @@
-const ReservationSidebar = () => {
+type Props = {
+  price: number | undefined;
+};
+
+const ReservationSidebar = ({ price }: Props) => {
   return (
     <aside className="mt-6 p-6 col-span-2 rounded-xl border border-gray-300 shadow-xl">
-      <h2 className="mb-5 text-2xl">$200 per night</h2>
+      <h2 className="mb-5 text-2xl">{`$${price || `XYZ`} per night`}</h2>
 
       <div className="mb-6 p-3 border border-gray-400 rounded-xl">
         <label className="mb-2 block font-bold text-xs">Guests</label>
@@ -19,13 +23,13 @@ const ReservationSidebar = () => {
       </div>
 
       <div className="mb-4 flex justify-between align-center">
-        <p>$200 * 4 nights</p>
+        <p>{`$${price || 100} * 4 nights`}</p>
 
-        <p>$800</p>
+        <p> {`$${(price || 100) * 4}`} </p>
       </div>
 
       <div className="mb-4 flex justify-between align-center">
-        <p>Djangobnb fee</p>
+        <p>airbnb fee</p>
 
         <p>$40</p>
       </div>
@@ -35,7 +39,7 @@ const ReservationSidebar = () => {
       <div className="mt-4 flex justify-between align-center font-bold">
         <p>Total</p>
 
-        <p>$840</p>
+        <p>{`$${(price || 100) * 4 + 40}`}</p>
       </div>
     </aside>
   );

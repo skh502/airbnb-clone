@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import { PropertyType } from "./PropertyList";
 
 interface PropertyItemProps {
@@ -8,26 +7,25 @@ interface PropertyItemProps {
 
 const PropertyListItem = ({ property }: PropertyItemProps) => {
   return (
-    <div className="cursor-pointer">
-      <div className="relative overflow-hidden aspect-square rounded-xl w-50 h-50">
+    <div className="flex flex-col gap-2 w-64">
+      <div className="overflow-hidden aspect-square rounded-xl">
         <Image
           src={property.image_url}
-          width={80}
-          height={80}
+          width={256}
+          height={256}
           priority
-          className="hover:scale-110 object-cover transition h-full w-full"
+          className="object-cover w-full h-full hover:scale-110 transition"
           alt={property.title}
         />
       </div>
 
-      <div className="mt-2">
+      <div className="flex flex-col gap-1">
         <p className="text-lg font-bold">{property.title}</p>
-      </div>
-
-      <div className="mt-2">
-        <p className="text-sm text-gray-500">
-          <strong>${property.price_per_night}</strong> per night
-        </p>
+        <div className="">
+          <p className="text-sm text-gray-500">
+            <strong>${property.price_per_night}</strong> per night
+          </p>
+        </div>
       </div>
     </div>
   );

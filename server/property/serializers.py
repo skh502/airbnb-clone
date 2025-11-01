@@ -33,7 +33,7 @@ class PropertiesDetailSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Property
-    fields = {
+    fields = [
       'id',
       'title',
       'description',
@@ -43,4 +43,4 @@ class PropertiesDetailSerializer(serializers.ModelSerializer):
       'bathrooms',
       'guests',
       'landlord'
-    }
+    ]

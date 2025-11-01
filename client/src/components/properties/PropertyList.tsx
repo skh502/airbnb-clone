@@ -2,15 +2,11 @@
 import { useEffect, useState } from "react";
 import PropertyListItem from "./PropertyListItem";
 import apiService from "@/services/apiService";
-
-export type PropertyType = {
-  id: string;
-  title: string;
-  image_url: string;
-  price_per_night: number;
-};
+import { useRouter } from "next/navigation";
+import { PropertyType } from "@/types/general";
 
 const PropertyList = () => {
+  const router = useRouter();
   const [properties, setProperties] = useState<PropertyType[]>([]);
 
   const getProperties = async () => {
@@ -27,18 +23,17 @@ const PropertyList = () => {
   }, []);
 
   return (
-    <>
-      {properties?.map((property) => {
-        return (
-          <div
-            key={property.id}
-            className="flex flex-col md:flex-row items-center md:justify-start"
-          >
-            <PropertyListItem key={property.id} property={property} />
-          </div>
-        );
-      })}
-    </>
+    <div className="flex flex-wrap gap-6 justify-start">
+      {properties?.map((property) => (
+        <div
+          key={property.id}
+          className="rounded-md transition cursor-pointer"
+          onClick={() => router.push(`properties/${property.id}`)}
+        >
+          <PropertyListItem property={property} />
+        </div>
+      ))}
+    </div>
   );
 };
 

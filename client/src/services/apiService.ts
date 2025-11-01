@@ -19,6 +19,7 @@ const apiService = {
           resolve(json);
         })
         .catch((error) => {
+          console.log("api errror:", error);
           reject(error);
         });
     });
