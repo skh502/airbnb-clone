@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import Property
+from . models import Property, Reservation
 from useraccount.serializers import UserDetailSerializer
 
 class PropertiesListSerializer(serializers.ModelSerializer):
@@ -44,3 +44,24 @@ class PropertiesDetailSerializer(serializers.ModelSerializer):
       'guests',
       'landlord'
     ]
+
+class ReservationCreateSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Reservation
+    fields = ['start_date', 'end_date', 'number_of_nights', 'guests', 'total_price']
+
+    def validate(self, data):
+      if data['start_date'] >= data['end_date']:
+        raise serializers.ValidationError('End date must be after start date')
+      
+      if data['guests'] <= 0:
+        raise serializers.ValidationError('Number of guests must be positive')
+
+      return data
+    
+class ReservationListSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Reservation
+    fields = (
+      'id', 'start_date', 'end_date', 'number_of_nights', 'total_price', 'property'
+    )

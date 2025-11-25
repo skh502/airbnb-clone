@@ -6,12 +6,14 @@ import apiService from "@/services/apiService";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { PropertyDetailType } from "@/types/general";
+import { getUserId } from "@/lib/action";
 
 const PropertyDetailPage = () => {
   const pathname = usePathname();
   const propertyId = pathname.split("/").filter(Boolean)[1] ?? "";
 
   const [detailData, setDetailData] = useState<PropertyDetailType>();
+  const [userId, setUserId] = useState<string | null>(null);
 
   const getPropertyDetail = async () => {
     try {
@@ -22,8 +24,14 @@ const PropertyDetailPage = () => {
     }
   };
 
+  const fetchUserId = async () => {
+    const id = await getUserId();
+    setUserId(id);
+  };
+
   useEffect(() => {
     getPropertyDetail();
+    fetchUserId();
   }, []);
 
   return (
@@ -68,7 +76,7 @@ const PropertyDetailPage = () => {
           <p className="mt-6 text-lg">{detailData?.description}</p>
         </div>
 
-        <ReservationSidebar price={detailData?.price_per_night} />
+        <ReservationSidebar userId={userId} property={detailData} />
       </div>
     </main>
   );

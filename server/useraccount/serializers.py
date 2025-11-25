@@ -1,4 +1,5 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import LoginSerializer
 from rest_framework import serializers
 from . models import User
 
@@ -10,6 +11,20 @@ class CustomRegisterSerializer(RegisterSerializer):
         data = super().get_cleaned_data()
         data['name'] = self.validated_data.get('name', '')
         return data
+
+# class CustomLoginSerializer(LoginSerializer):
+#     username = None
+#     def to_representation(self, instance):
+#         data =  super().to_representation(instance)
+#         user = self.context['request'].user
+#         if user.is_authenticated:
+#             data['user'] = {
+#                 'id': str(user.id),
+#                 'email': user.email,
+#                 'name': user.name,
+#                 'avatar_url': user.avatar_url()
+#             }
+#         return data
     
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,6 +32,13 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'avatar_url'
         ]
+
+        def to_representation(self, instance):
+            data = super().to_representation(instance)
+            # Add email if requested via context
+            if self.context.get('include_email', False):
+                data['email'] = instance.email
+            return data
 
 
 

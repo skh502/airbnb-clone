@@ -5,6 +5,7 @@ import MenuLink from "./MenuLink";
 import useLoginModal from "@/hooks/useLoginModal";
 import useSignupModal from "@/hooks/useSignupModal";
 import LogoutButton from "../LogoutButton";
+import apiService from "@/services/apiService";
 
 type Props = {
   userId: string | null;
@@ -15,6 +16,25 @@ const UserNav = ({ userId }: Props) => {
   const signupModal = useSignupModal();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [userData, setUserData] = useState();
+
+  const getUserDetail = async () => {
+    console.log("getUserDetail called with userId:", userId);
+    try {
+      const userData = await apiService.get(`/api/auth/user-profile/`);
+      console.log("User data received:", userData);
+      setUserData(userData);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("useEffect triggered with userId:", userId);
+    if (userId) {
+      getUserDetail();
+    }
+  }, [userId]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -32,6 +52,8 @@ const UserNav = ({ userId }: Props) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen]);
+
+  console.log(userData);
 
   return (
     <div

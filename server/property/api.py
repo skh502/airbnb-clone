@@ -4,9 +4,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
-from .serializers import PropertiesListSerializer, PropertyCreateSerializer, PropertiesDetailSerializer
-
-from .models import Property
+from django.shortcuts import get_object_or_404
+from django.http import Http404
+from .serializers import PropertiesListSerializer, PropertyCreateSerializer, PropertiesDetailSerializer, ReservationCreateSerializer, ReservationListSerializer
+from .models import Property, Reservation
 
 @api_view(['GET'])
 @authentication_classes([])
@@ -54,3 +55,50 @@ def properties_detail(request, pk):
   property = Property.objects.get(pk=pk)
   serializer = PropertiesDetailSerializer(property, many=False)
   return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def book_property(request, pk):
+    property = get_object_or_404(Property, pk=pk)
+
+    serializer = ReservationCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        reservation = serializer.save(
+           property=property,
+           created_by=request.user
+        )
+        return Response( 
+           {'success': True, 'id': reservation.id},
+           status=status.HTTP_201_CREATED
+        )
+
+    return Response(
+        {'success': False, 'errors': serializer.errors},
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def property_reservations(request, pk):
+    try:
+        property = get_object_or_404(Property, pk=pk)
+        # reservations = property.reservations.all()
+        reservations = property.reservations.all()
+        serializer = ReservationListSerializer(reservations, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    except Http404:
+        return Response(
+            {'error': 'Property not found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'error': 'Internal server error'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+   
+  
