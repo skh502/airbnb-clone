@@ -9,8 +9,12 @@
 Thumbs.db
 
 # === Environment ===
-.env          # Global .env (if any)
-*.env.local   # Local overrides
+.env
+.env.dev
+.env.local
+.env.prod
+.env.*
+!.env.example
 
 # === Logs ===
 *.log

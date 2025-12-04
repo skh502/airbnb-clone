@@ -6,5 +6,10 @@ __pycache__/
 *.pyc
 *.pyo
 
-.env*
+.env
+.env.dev
+.env.local
+.env.prod
+.env.*
+!.env.example
 
