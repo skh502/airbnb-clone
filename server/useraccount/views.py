@@ -6,6 +6,9 @@ from .serializers import UserDetailSerializer
 # Create your views here.
 
 @api_view(['GET'])
+@permission_classes([])
 def user_profile(request):
-  serializer = UserDetailSerializer(request.user)
+  include_email = request.query_params.get('include_email', '').lower() == 'true'
+
+  serializer = UserDetailSerializer(request.user, context={'include_email': include_email})
   return Response(serializer.data)

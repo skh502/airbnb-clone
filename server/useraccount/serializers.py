@@ -4,41 +4,41 @@ from rest_framework import serializers
 from . models import User
 
 class CustomRegisterSerializer(RegisterSerializer):
-    username = None
-    name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+  username = None
+  name = serializers.CharField(max_length=255, required=False, allow_blank=True)
     
-    def get_cleaned_data(self):
-        data = super().get_cleaned_data()
-        data['name'] = self.validated_data.get('name', '')
-        return data
+  def get_cleaned_data(self):
+    data = super().get_cleaned_data()
+    data['name'] = self.validated_data.get('name', '')
+    return data
 
 # class CustomLoginSerializer(LoginSerializer):
-#     username = None
-#     def to_representation(self, instance):
-#         data =  super().to_representation(instance)
-#         user = self.context['request'].user
-#         if user.is_authenticated:
-#             data['user'] = {
-#                 'id': str(user.id),
-#                 'email': user.email,
-#                 'name': user.name,
-#                 'avatar_url': user.avatar_url()
-#             }
-#         return data
+#   username = None
+#   def to_representation(self, instance):
+#     data =  super().to_representation(instance)
+#     user = self.context['request'].user
+#     if user.is_authenticated:
+#       data['user'] = {
+#           'id': str(user.id),
+#           'email': user.email,
+#           'name': user.name,
+#           'avatar_url': user.avatar_url()
+#       }
+#     return data
     
 class UserDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'id', 'name', 'avatar_url'
-        ]
+  class Meta:
+    model = User
+    fields = [
+      'id', 'name', 'avatar_url'
+    ]
 
-        def to_representation(self, instance):
-            data = super().to_representation(instance)
-            # Add email if requested via context
-            if self.context.get('include_email', False):
-                data['email'] = instance.email
-            return data
+  def to_representation(self, instance):
+    data = super().to_representation(instance)
+    # Add email if requested via context
+    if self.context.get('include_email', False):
+      data['email'] = instance.email
+    return data
 
 
 
