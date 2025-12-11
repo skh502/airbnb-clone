@@ -19,18 +19,18 @@ const UserNav = ({ userId }: Props) => {
   const [userData, setUserData] = useState();
 
   const getUserDetail = async () => {
-    console.log("getUserDetail called with userId:", userId);
     try {
-      const userData = await apiService.get(`/api/auth/user-profile/`);
-      console.log("User data received:", userData);
+      const userData = await apiService.get(
+        `/api/auth/user-profile/?include_email=hello`
+      );
       setUserData(userData);
+      // console.log(userData);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
 
   useEffect(() => {
-    console.log("useEffect triggered with userId:", userId);
     if (userId) {
       getUserDetail();
     }
@@ -52,8 +52,6 @@ const UserNav = ({ userId }: Props) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [isOpen]);
-
-  console.log(userData);
 
   return (
     <div

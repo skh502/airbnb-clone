@@ -50,7 +50,6 @@ const ReservationSidebar = ({ userId, property }: Props) => {
       `/api/properties/${property?.id}/reservations/`
     );
 
-    console.log("hello", reservations);
     let dates: Date[] = [];
 
     reservations.forEach((reservation: any) => {
@@ -89,11 +88,9 @@ const ReservationSidebar = ({ userId, property }: Props) => {
     }
   }, [dateRange, property]);
 
-  console.log(bookedDates);
-
   const handleBooking = async () => {
     if (!userId) {
-      console.log("Login first");
+      // console.log("Login first");
       loginModal.open();
       return;
     } else {
@@ -108,11 +105,6 @@ const ReservationSidebar = ({ userId, property }: Props) => {
         formData.append("number_of_nights", nights.toString());
         formData.append("total_price", totalPrice.toString());
 
-        // console.log("FormData entries:");
-        // for (const [key, value] of formData.entries()) {
-        //   console.log(key, value);
-        // }
-
         const response = await apiService.post(
           `/api/properties/${property?.id}/book/`,
           formData
@@ -126,9 +118,6 @@ const ReservationSidebar = ({ userId, property }: Props) => {
       }
     }
   };
-
-  // console.log(dateRange);
-  console.log(bookedDates);
 
   return (
     <aside className="mt-6 p-6 col-span-2 rounded-xl border border-gray-300 shadow-xl">
