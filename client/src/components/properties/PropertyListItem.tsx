@@ -1,5 +1,5 @@
+import { PropertyType } from "@/types/general";
 import Image from "next/image";
-import { PropertyType } from "./PropertyList";
 
 interface PropertyItemProps {
   property: PropertyType;

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { PropertyDetailType } from "@/types/general";
 import { getUserId } from "@/lib/action";
+import Link from "next/link";
 
 const PropertyDetailPage = () => {
   const pathname = usePathname();
@@ -56,19 +57,24 @@ const PropertyDetailPage = () => {
           <hr />
 
           <div className="py-6 flex items-center space-x-4">
-            <div className="w-12 h-12 rounded-full overflow-hidden">
-              <Image
-                src={detailData?.landlord?.avatar_url || "/profile_pic_1.jpg"}
-                width={50}
-                height={50}
-                className="w-full h-full object-cover"
-                alt="The user name"
-              />
-            </div>
+            <Link
+              href={`/landlords/${detailData?.landlord?.id}`}
+              className={"y-6 flex items-center gap-1"}
+            >
+              <div className="w-12 h-12 rounded-full overflow-hidden hover:border-4 hover:border-blue-200 hover:scale-[0.9] transition-all duration-300 ease-in-out">
+                <Image
+                  src={detailData?.landlord?.avatar_url || "/profile_pic_1.jpg"}
+                  width={50}
+                  height={50}
+                  className="w-full h-full object-cover"
+                  alt="The user name"
+                />
+              </div>
 
-            <p>
-              <strong>{detailData?.landlord?.name}</strong> is your host
-            </p>
+              <p className="hover:text-blue-400 hover:underline transition-colors duration-200">
+                <strong>{detailData?.landlord?.name}</strong> is your host
+              </p>
+            </Link>
           </div>
 
           <hr />

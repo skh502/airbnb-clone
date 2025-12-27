@@ -12,5 +12,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='rest_login'),
     # path('login/', LoginView.as_view(serializer_class=CustomLoginSerializer), name='rest_login'),
     path('logout/', LogoutView.as_view(), name='rest_logout'),
-    path('user-profile/', views.user_profile, name='user_profile' )
+    path('user-profile/', views.user_profile, name='user_profile' ),
+    path('<uuid:pk>/', views.landlord_detail, name='api_landlrod_detail')
 ]

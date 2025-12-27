@@ -2,6 +2,16 @@ export type LandlordType = {
   id: string;
   name: string;
   avatar_url: string;
+  email?: string;
+  properties?: PropertyType[];
+};
+
+export type UserType = {
+  id: string;
+  name: string;
+  avatar_url: string;
+  email?: string;
+  properties?: PropertyType[];
 };
 
 export type PropertyType = {

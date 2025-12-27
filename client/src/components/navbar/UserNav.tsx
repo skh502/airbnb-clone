@@ -6,6 +6,8 @@ import useLoginModal from "@/hooks/useLoginModal";
 import useSignupModal from "@/hooks/useSignupModal";
 import LogoutButton from "../LogoutButton";
 import apiService from "@/services/apiService";
+import { UserType } from "@/types/general";
+import { CircleUser } from "lucide-react";
 
 type Props = {
   userId: string | null;
@@ -16,7 +18,7 @@ const UserNav = ({ userId }: Props) => {
   const signupModal = useSignupModal();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState<UserType>();
 
   const getUserDetail = async () => {
     try {
@@ -92,9 +94,15 @@ const UserNav = ({ userId }: Props) => {
       </button>
 
       {isOpen && (
-        <div className="w-[220px] absolute top-[105%] right-0 bg-white border border-red-300 rounded-xl shadow-md flex flex-col cursor-pointer z-12">
+        <div className="w-[220px] absolute top-[105%] right-0 bg-white border border-red-300 rounded-xl shadow-md flex flex-col cursor-pointer z-12 overflow-hidden">
           {userId ? (
-            <LogoutButton />
+            <div className="flex flex-col overflow-hidden">
+              <p className="flex gap-2 items-center capitalize px-5 py-3 border-b border-airbnb hover:text-airbnb/90 text-black/80 hover:bg-gray-100">
+                <CircleUser className="w-5 h-5" />
+                <span className="text-[1.18rem]">{userData?.name}</span>
+              </p>
+              <LogoutButton />
+            </div>
           ) : (
             <>
               <MenuLink

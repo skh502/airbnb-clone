@@ -5,22 +5,38 @@ import apiService from "@/services/apiService";
 import { useRouter } from "next/navigation";
 import { PropertyType } from "@/types/general";
 
-const PropertyList = () => {
+type Props = {
+  landlord_id?: string;
+};
+
+const PropertyList = ({ landlord_id }: Props) => {
   const router = useRouter();
   const [properties, setProperties] = useState<PropertyType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getProperties = async () => {
+    let url = `/api/properties/`;
     try {
-      const tempData = await apiService.get("/api/properties/");
+      setIsLoading(true);
+      if (landlord_id) {
+        url += `?landlord_id=${landlord_id}`;
+      }
+      const tempData = await apiService.get(`${url}`);
       setProperties(tempData);
     } catch (error) {
       console.error("Error fetching properties:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     getProperties();
-  }, []);
+  }, [landlord_id]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-wrap gap-6 justify-start">
@@ -28,7 +44,7 @@ const PropertyList = () => {
         <div
           key={property.id}
           className="rounded-md transition cursor-pointer"
-          onClick={() => router.push(`properties/${property.id}`)}
+          onClick={() => router.push(`/properties/${property.id}`)}
         >
           <PropertyListItem property={property} />
         </div>

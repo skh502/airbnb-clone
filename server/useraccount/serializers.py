@@ -40,6 +40,17 @@ class UserDetailSerializer(serializers.ModelSerializer):
       data['email'] = instance.email
     return data
 
+class LandlordPropertyDetail(serializers.ModelSerializer):
+  # new changes to be kept here
+  properties = serializers.SerializerMethodField()
+  class Meta:
+    model = User
+    fields = UserDetailSerializer.Meta.fields + ['properties', 'email']
+  
+  def get_properties(self, obj):
+    from property.serializers import PropertiesListSerializer
+    return PropertiesListSerializer(obj.properties.all(), many=True).data
+  
 
 
 
