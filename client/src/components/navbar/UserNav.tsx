@@ -5,9 +5,9 @@ import MenuLink from "./MenuLink";
 import useLoginModal from "@/hooks/useLoginModal";
 import useSignupModal from "@/hooks/useSignupModal";
 import LogoutButton from "../LogoutButton";
-import apiService from "@/services/apiService";
-import { UserType } from "@/types/general";
 import { CircleUser } from "lucide-react";
+import { useUserStore } from "@/store/useUserStore";
+import { useRouter } from "next/navigation";
 
 type Props = {
   userId: string | null;
@@ -16,27 +16,10 @@ type Props = {
 const UserNav = ({ userId }: Props) => {
   const loginModal = useLoginModal();
   const signupModal = useSignupModal();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [userData, setUserData] = useState<UserType>();
-
-  const getUserDetail = async () => {
-    try {
-      const userData = await apiService.get(
-        `/api/auth/user-profile/?include_email=hello`
-      );
-      setUserData(userData);
-      // console.log(userData);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      getUserDetail();
-    }
-  }, [userId]);
+  const { user } = useUserStore();
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -97,11 +80,25 @@ const UserNav = ({ userId }: Props) => {
         <div className="w-[220px] absolute top-[105%] right-0 bg-white border border-red-300 rounded-xl shadow-md flex flex-col cursor-pointer z-12 overflow-hidden">
           {userId ? (
             <div className="flex flex-col overflow-hidden">
-              <p className="flex gap-2 items-center capitalize px-5 py-3 border-b border-airbnb hover:text-airbnb/90 text-black/80 hover:bg-gray-100">
+              <p className="flex gap-2 items-center capitalize px-5 py-3 border-b border-airbnb text-black/80 cursor-default">
                 <CircleUser className="w-5 h-5" />
-                <span className="text-[1.18rem]">{userData?.name}</span>
+                <span className="text-[1.18rem]">{user?.name}</span>
               </p>
-              <LogoutButton />
+              <MenuLink
+                label="My Properties"
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push("/myproperties");
+                }}
+              />
+              <MenuLink
+                label="My Reservations"
+                onClick={() => {
+                  setIsOpen(false);
+                  router.push("/myreservations");
+                }}
+              />
+              <LogoutButton setIsOpen={setIsOpen} />
             </div>
           ) : (
             <>

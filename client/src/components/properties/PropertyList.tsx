@@ -7,9 +7,10 @@ import { PropertyType } from "@/types/general";
 
 type Props = {
   landlord_id?: string;
+  className?: string;
 };
 
-const PropertyList = ({ landlord_id }: Props) => {
+const PropertyList = ({ landlord_id, className }: Props) => {
   const router = useRouter();
   const [properties, setProperties] = useState<PropertyType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +24,7 @@ const PropertyList = ({ landlord_id }: Props) => {
       }
       const tempData = await apiService.get(`${url}`);
       setProperties(tempData);
+      // console.log(tempData)
     } catch (error) {
       console.error("Error fetching properties:", error);
     } finally {
@@ -39,7 +41,7 @@ const PropertyList = ({ landlord_id }: Props) => {
   }
 
   return (
-    <div className="flex flex-wrap gap-6 justify-start">
+    <div className={`flex flex-wrap gap-6 justify-start ${className}`}>
       {properties?.map((property) => (
         <div
           key={property.id}

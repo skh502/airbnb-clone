@@ -6,11 +6,13 @@ import apiService from "@/services/apiService";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { LandlordType } from "@/types/general";
+import { useUserStore } from "@/store/useUserStore";
 
 const LandlordDetailPage = () => {
   const params = useParams();
   const [landlordData, setLandlordData] = useState<LandlordType>();
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useUserStore();
 
   const getLandlordDetail = async () => {
     try {
@@ -48,7 +50,9 @@ const LandlordDetailPage = () => {
 
             <h1 className="mt-6 text-2xl">{landlordData?.name}</h1>
 
-            <ContactButton />
+            {user?.id && landlordData?.id && user.id !== landlordData.id && (
+              <ContactButton />
+            )}
           </div>
         </aside>
 
