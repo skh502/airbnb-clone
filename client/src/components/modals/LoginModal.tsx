@@ -8,6 +8,7 @@ import CustomButton from "../forms/CustomButton";
 import useLoginModal from "@/hooks/useLoginModal";
 import apiService from "@/services/apiService";
 import { handleLogin } from "@/lib/action";
+import { useUserStore } from "@/store/useUserStore";
 
 const LoginModal = () => {
   const router = useRouter();
@@ -15,21 +16,26 @@ const LoginModal = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
+  const { setUser } = useUserStore();
 
   const submitLogin = async () => {
-    // console.log("login", email, password);
     const formData = {
       email,
       password,
     };
     const response = await apiService.postWithoutToken(
       "/api/auth/login/",
-      JSON.stringify(formData)
+      JSON.stringify(formData),
     );
 
     if (response.access) {
       handleLogin(response.user.pk, response.access, response.refresh);
       loginModal.close();
+      const userData = await apiService.get(
+        `/api/auth/user-profile/?include_email=true`,
+      );
+      setUser(userData);
+      // console.log("from login:", userData);
       router.push("/");
     } else {
       setErrors(response.non_field_errors);

@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar/Navbar";
 import LoginModal from "@/components/modals/LoginModal";
 import SignupModal from "@/components/modals/SignupModal";
 import AddPropertyModal from "@/components/modals/AddPropertyModal";
+import UserInfoProvider from "@/context/UserInfoProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +32,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <div className="pt-32">{children}</div>
-        <LoginModal />
-        <SignupModal />
-        <AddPropertyModal />
+        <UserInfoProvider>
+          <Navbar />
+          <div className="pt-32">{children}</div>
+          <LoginModal />
+          <SignupModal />
+          <AddPropertyModal />
+        </UserInfoProvider>
       </body>
     </html>
   );
