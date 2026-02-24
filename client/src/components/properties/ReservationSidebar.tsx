@@ -3,7 +3,12 @@ import { useEffect, useState } from "react";
 import useLoginModal from "@/hooks/useLoginModal";
 import { Range } from "react-date-range";
 import LoginModal from "../modals/LoginModal";
-import { differenceInDays, eachDayOfInterval, format } from "date-fns";
+import {
+  differenceInDays,
+  eachDayOfInterval,
+  format,
+  isSameDay,
+} from "date-fns";
 import DatePicker from "../forms/DateRange";
 import apiService from "@/services/apiService";
 import { PropertyDetailType } from "@/types/general";
@@ -34,10 +39,6 @@ const ReservationSidebar = ({ userId, property }: Props) => {
     const newStartDate = new Date(selection.startDate);
     const newEndDate = new Date(selection.endDate);
 
-    if (newEndDate <= newStartDate) {
-      newEndDate.setDate(newStartDate.getDate() + 1);
-    }
-
     setDateRange({
       ...dateRange,
       startDate: newStartDate,
@@ -47,7 +48,7 @@ const ReservationSidebar = ({ userId, property }: Props) => {
 
   const getReservations = async () => {
     const reservations = await apiService.get(
-      `/api/properties/${property?.id}/reservations/`
+      `/api/properties/${property?.id}/reservations/`,
     );
 
     let dates: Date[] = [];
@@ -72,18 +73,16 @@ const ReservationSidebar = ({ userId, property }: Props) => {
 
   useEffect(() => {
     if (property && dateRange.startDate && dateRange.endDate) {
-      const dayCount = differenceInDays(dateRange.endDate, dateRange.startDate);
+      const isDaysSame = isSameDay(dateRange.startDate, dateRange.endDate);
+      const dayCount = isDaysSame
+        ? 1
+        : differenceInDays(dateRange.endDate, dateRange.startDate);
 
-      if (dayCount && property) {
+      if (property) {
         const _fee = ((dayCount * property.price_per_night) / 100) * 5;
         setFee(_fee);
         setTotalPrice(dayCount * property.price_per_night + _fee);
         setNights(dayCount);
-      } else {
-        const _fee = ((property.price_per_night ?? 200) / 100) * 5;
-        setFee(_fee);
-        setTotalPrice((property.price_per_night ?? 200) + _fee);
-        setNights(1);
       }
     }
   }, [dateRange, property]);
@@ -96,18 +95,25 @@ const ReservationSidebar = ({ userId, property }: Props) => {
     } else {
       if (dateRange.startDate && dateRange.endDate) {
         const formData = new FormData();
+
+        const isDaysSame = isSameDay(dateRange.startDate, dateRange.endDate);
+        let startDate = dateRange.startDate;
+        let endDate = dateRange.endDate;
+        if (isDaysSame) {
+          // end_date = start_date + 1 day (for same-day selection)
+          endDate = new Date(dateRange.startDate);
+          endDate.setDate(endDate.getDate() + 1);
+        }
+
         formData.append("guests", guests);
-        formData.append(
-          "start_date",
-          format(dateRange.startDate, "yyyy-MM-dd")
-        );
-        formData.append("end_date", format(dateRange.endDate, "yyyy-MM-dd"));
+        formData.append("start_date", format(startDate, "yyyy-MM-dd"));
+        formData.append("end_date", format(endDate, "yyyy-MM-dd"));
         formData.append("number_of_nights", nights.toString());
         formData.append("total_price", totalPrice.toString());
 
         const response = await apiService.post(
           `/api/properties/${property?.id}/book/`,
-          formData
+          formData,
         );
 
         if (response.success) {
@@ -145,7 +151,7 @@ const ReservationSidebar = ({ userId, property }: Props) => {
               <option key={idx} value={num} className="cursor-pointer">
                 {num}
               </option>
-            )
+            ),
           )}
         </select>
       </div>
