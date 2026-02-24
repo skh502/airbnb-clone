@@ -8,10 +8,13 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from .serializers import PropertiesListSerializer, PropertyCreateSerializer, PropertiesDetailSerializer, ReservationCreateSerializer, ReservationListSerializer
 from .models import Property, Reservation
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from useraccount.authentication import OptionalJWTAuthentication
 
-@api_view(['GET'])
-@authentication_classes([])
-@permission_classes([])
+@api_view(['GET'])        
+@authentication_classes([OptionalJWTAuthentication])
+@permission_classes([AllowAny])            
 def properties_list(request):
   properties = Property.objects.all()
 
@@ -20,7 +23,7 @@ def properties_list(request):
   if landlord_id:
     properties = properties.filter(landlord_id=landlord_id)
 
-  serializers = PropertiesListSerializer(properties, many=True)
+  serializers = PropertiesListSerializer(properties, many=True, context={'request': request})
   return Response(serializers.data, status=status.HTTP_200_OK)
 
 
@@ -101,7 +104,19 @@ def property_reservations(request, pk):
       {'error': 'Internal server error'}, 
       status=status.HTTP_500_INTERNAL_SERVER_ERROR
     )
-
-
-   
   
+  
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def toggle_favorite(request, pk):
+  property = get_object_or_404(Property, pk=pk)
+  user = request.user
+
+  if property.favorited.filter(id=user.id).exists():
+    property.favorited.remove(user)
+    return Response({'is_favorited': False})
+  else:
+    property.favorited.add(user)
+    return Response({'is_favorited': True})
+    

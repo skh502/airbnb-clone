@@ -3,6 +3,7 @@ from . models import Property, Reservation
 from useraccount.serializers import UserDetailSerializer
 
 class PropertiesListSerializer(serializers.ModelSerializer):
+  is_favorited = serializers.SerializerMethodField()
   class Meta:
     model = Property
     fields = [
@@ -10,7 +11,15 @@ class PropertiesListSerializer(serializers.ModelSerializer):
       'title',
       'price_per_night',
       'image_url',
+      'is_favorited'
     ]
+  
+  def get_is_favorited(self, obj):
+    request = self.context.get('request')
+    if request and request.user.is_authenticated:
+      return obj.favorited.filter(id=request.user.id).exists()
+    return False
+
 
 class PropertyCreateSerializer(serializers.ModelSerializer):
   class Meta: 
@@ -50,16 +59,18 @@ class ReservationCreateSerializer(serializers.ModelSerializer):
     model = Reservation
     fields = ['start_date', 'end_date', 'number_of_nights', 'guests', 'total_price']
 
-    def validate(self, data):
-      if data['start_date'] >= data['end_date']:
-        raise serializers.ValidationError('End date must be after start date')
-      
-      if data['guests'] <= 0:
-        raise serializers.ValidationError('Number of guests must be positive')
+  def validate(self, data):
+    if data['start_date'] >= data['end_date']:
+      raise serializers.ValidationError('End date must be after start date')
+    
+    if data['guests'] <= 0:
+      raise serializers.ValidationError('Number of guests must be positive')
 
-      return data
+    return data
     
 class ReservationListSerializer(serializers.ModelSerializer):
+
+  property = PropertiesListSerializer(read_only=True)
   class Meta:
     model = Reservation
     fields = (
