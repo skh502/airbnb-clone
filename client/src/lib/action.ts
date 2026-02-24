@@ -60,6 +60,43 @@ export async function deleteAuthCookies() {
   // });
 }
 
+export async function handleRefresh(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("session_refresh_token")?.value;
+
+  if (!refreshToken) return undefined;
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/token/refresh/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh: refreshToken }),
+      },
+    );
+
+    if (!response.ok) {
+      await deleteAuthCookies();
+      return undefined;
+    }
+
+    const data = await response.json();
+
+    // Save new access token
+    cookieStore.set("session_access_token", data.access, {
+      httpOnly: true,
+      secure: false,
+      maxAge: 60 * 60,
+      path: "/",
+    });
+
+    return data.access;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function getUserId() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("session_userid")?.value;
@@ -72,8 +109,7 @@ export async function getAccessToken() {
 
   let accessToken = cookieStore.get("session_access_token")?.value;
   if (!accessToken) {
-    // accessToken = await handleRefresh();
-    // some logic after sometime
+    accessToken = await handleRefresh();
   }
-  return accessToken;
+  return accessToken ?? undefined;
 }

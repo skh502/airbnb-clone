@@ -78,7 +78,7 @@ const UserNav = ({ userId }: Props) => {
 
       {isOpen && (
         <div className="w-[220px] absolute top-[105%] right-0 bg-white border border-red-300 rounded-xl shadow-md flex flex-col cursor-pointer z-12 overflow-hidden">
-          {userId ? (
+          {user?.id ? (
             <div className="flex flex-col overflow-hidden">
               <p className="flex gap-2 items-center capitalize px-5 py-3 border-b border-airbnb text-black/80 cursor-default">
                 <CircleUser className="w-5 h-5" />
