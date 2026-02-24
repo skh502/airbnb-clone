@@ -19,6 +19,7 @@ export type PropertyType = {
   title: string;
   image_url: string;
   price_per_night: number;
+  is_favorited?: boolean;
 };
 
 export type PropertyDetailType = PropertyType & {
@@ -27,4 +28,13 @@ export type PropertyDetailType = PropertyType & {
   bathrooms: number;
   guests: number;
   landlord: LandlordType;
+};
+
+export type ReservationType = {
+  id: string;
+  property?: PropertyType;
+  number_of_nights: number;
+  total_price?: number;
+  start_date?: string;
+  end_date?: string;
 };

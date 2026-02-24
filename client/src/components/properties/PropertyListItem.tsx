@@ -1,14 +1,19 @@
 import { PropertyType } from "@/types/general";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 
 interface PropertyItemProps {
   property: PropertyType;
+  handleFavoriteToggle: (e: React.MouseEvent, id: string) => void;
 }
 
-const PropertyListItem = ({ property }: PropertyItemProps) => {
+const PropertyListItem = ({
+  property,
+  handleFavoriteToggle,
+}: PropertyItemProps) => {
   return (
     <div className="flex flex-col gap-2 w-64">
-      <div className="overflow-hidden aspect-square rounded-xl">
+      <div className="overflow-hidden aspect-square rounded-xl relative">
         <Image
           src={property.image_url}
           width={256}
@@ -16,6 +21,13 @@ const PropertyListItem = ({ property }: PropertyItemProps) => {
           priority
           className="object-cover w-full h-full hover:scale-110 transition"
           alt={property.title}
+        />
+
+        <Heart
+          className={`absolute right-1 top-1 w-6 h-6 text-white 
+            ${property?.is_favorited && "fill-airbnb"}
+            `}
+          onClick={(e) => handleFavoriteToggle(e, property?.id)}
         />
       </div>
 
