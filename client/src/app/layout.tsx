@@ -6,6 +6,7 @@ import LoginModal from "@/components/modals/LoginModal";
 import SignupModal from "@/components/modals/SignupModal";
 import AddPropertyModal from "@/components/modals/AddPropertyModal";
 import UserInfoProvider from "@/context/UserInfoProvider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,8 @@ export default function RootLayout({
           <SignupModal />
           <AddPropertyModal />
         </UserInfoProvider>
+
+        <Toaster position="top-right" richColors closeButton duration={4000} />
       </body>
     </html>
   );
