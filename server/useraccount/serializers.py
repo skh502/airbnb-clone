@@ -37,7 +37,9 @@ class UserDetailSerializer(serializers.ModelSerializer):
     data = super().to_representation(instance)
     # Add email if requested via context
     if self.context.get('include_email', False):
-      data['email'] = instance.email
+      email = getattr(instance, 'email', None)
+      if email:
+        data['email'] = email
     return data
 
 class LandlordPropertyDetail(serializers.ModelSerializer):
