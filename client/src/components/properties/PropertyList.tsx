@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { PropertyType } from "@/types/general";
 import { useUserStore } from "@/store/useUserStore";
 import { toast } from "sonner";
+import { usePropertyListStore } from "@/store/usePropertyListStore";
 
 type Props = {
   landlord_id?: string;
@@ -14,9 +15,9 @@ type Props = {
 
 const PropertyList = ({ landlord_id, className }: Props) => {
   const router = useRouter();
-  const [properties, setProperties] = useState<PropertyType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const { user } = useUserStore();
+  const { propertyList, setPropertyList } = usePropertyListStore();
+  const [isLoading, setIsLoading] = useState(true);
 
   const getProperties = async () => {
     let url = `/api/properties/`;
@@ -26,8 +27,8 @@ const PropertyList = ({ landlord_id, className }: Props) => {
         url += `?landlord_id=${landlord_id}`;
       }
       const tempData = await apiService.get(`${url}`);
-      setProperties(tempData);
-      console.log(tempData);
+      // setProperties(tempData);
+      setPropertyList(tempData);
     } catch (error) {
       console.error("Error fetching properties:", error);
     } finally {
@@ -36,14 +37,24 @@ const PropertyList = ({ landlord_id, className }: Props) => {
   };
 
   useEffect(() => {
-    getProperties();
-  }, [landlord_id]);
+    if (user?.id) {
+      getProperties();
+    } else {
+      if (propertyList && !landlord_id) {
+        setPropertyList(
+          propertyList.map((p) => ({ ...p, is_favorited: false })),
+        );
+      } else {
+        getProperties();
+      }
+    }
+  }, [landlord_id, user?.id]);
 
   const handleFavoriteToggle = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
 
     if (!user?.id) {
-      toast.error("please login first");
+      toast.error("Please log in first to add favorites.");
       return;
     }
 
@@ -51,15 +62,12 @@ const PropertyList = ({ landlord_id, className }: Props) => {
       `/api/properties/${id}/toggle_favorite/`,
       {},
     );
-    setProperties((prev) =>
-      prev.map((property) =>
+    setPropertyList(
+      propertyList?.map((property) =>
         property.id === id
-          ? {
-              ...property,
-              is_favorited: response.is_favorited,
-            }
+          ? { ...property, is_favorited: response.is_favorited }
           : property,
-      ),
+      ) ?? null,
     );
   };
 
@@ -69,7 +77,7 @@ const PropertyList = ({ landlord_id, className }: Props) => {
 
   return (
     <div className={`flex flex-wrap gap-6 justify-start ${className}`}>
-      {properties?.map((property) => (
+      {propertyList?.map((property) => (
         <div
           key={property.id}
           className="rounded-md transition cursor-pointer"

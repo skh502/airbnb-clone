@@ -29,14 +29,14 @@ const LoginModal = () => {
     );
 
     if (response.access) {
-      handleLogin(response.user.pk, response.access, response.refresh);
+      await handleLogin(response.user.pk, response.access, response.refresh);
       loginModal.close();
       const userData = await apiService.get(
         `/api/auth/user-profile/?include_email=true`,
       );
       setUser(userData);
-      // console.log("from login:", userData);
-      router.push("/");
+      // window.dispatchEvent(new Event("auth-change"));
+      router.replace("/");
     } else {
       setErrors(response.non_field_errors);
     }
